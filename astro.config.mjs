@@ -4,8 +4,21 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
+import tailwindcss from '@tailwindcss/vite';
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
-	integrations: [mdx(), sitemap()],
+  site: 'https://mkarots.github.io',
+  // Remove base to use root path
+  integrations: [mdx(), sitemap(), react()],
+  markdown: {
+    shikiConfig: {
+      theme: 'github-dark',
+      wrap: true,
+    },
+  },
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });

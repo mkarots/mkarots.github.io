@@ -1,62 +1,104 @@
-# Astro Starter Kit: Blog
+# Blogfolio
 
-```sh
-npm create astro@latest -- --template blog
+A minimal, clean personal blog for developers. Built with Astro, TypeScript, and Tailwind CSS.
+
+## Features
+
+- ✨ **Minimal Design** - Clean, distraction-free reading experience
+- 📝 **MDX Support** - Write in Markdown with React components
+- 🌙 **Dark Mode** - Automatic theme switching
+- ⚡ **Fast** - Static site generation, optimized performance
+- 📱 **Responsive** - Works on all devices
+- 🔍 **SEO Optimized** - Meta tags, sitemap, RSS feed
+- 🚀 **Easy Deploy** - GitHub Pages with automatic deployments
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Visit `http://localhost:4321/blogfolio`
 
-Features:
+## Documentation
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Complete setup and customization guide
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture and design decisions
+- **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)** - Detailed implementation guide
 
-## 🚀 Project Structure
+## Customization
 
-Inside of your Astro project, you'll see the following folders and files:
+1. **Update site info** in `src/consts.ts`
+2. **Edit homepage** in `src/pages/index.astro`
+3. **Update links** in `src/components/Header.astro` and `src/components/Footer.astro`
+4. **Configure deployment** in `astro.config.mjs`
 
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+## Writing
+
+Create a new post in `src/content/blog/`:
+
+```markdown
+---
+title: 'Your Post Title'
+description: 'Brief description'
+pubDate: 2024-01-15
+---
+
+# Your content here
+
+Write in Markdown or MDX.
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deployment
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### GitHub Pages
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+1. Push to GitHub
+2. Enable GitHub Pages in repository settings
+3. Set source to "GitHub Actions"
+4. Update `site` and `base` in `astro.config.mjs`
 
-Any static assets, like images, can be placed in the `public/` directory.
+Your site will be live at `https://yourusername.github.io/repo-name`
 
-## 🧞 Commands
+See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed instructions.
 
-All commands are run from the root of the project, from a terminal:
+## Design Philosophy
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+This theme prioritizes:
+- **Substance over style** - Content comes first
+- **Readability** - Optimized typography and spacing
+- **Simplicity** - No unnecessary features or distractions
+- **Performance** - Fast loading, minimal JavaScript
 
-## 👀 Want to learn more?
+Perfect for engineers who want to focus on writing.
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Tech Stack
 
-## Credit
+- **[Astro](https://astro.build)** - Static site generator
+- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
+- **[Tailwind CSS](https://tailwindcss.com)** - Styling
+- **[MDX](https://mdxjs.com/)** - Enhanced Markdown
+- **[React](https://react.dev/)** - Interactive components (theme toggle)
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## Commands
+
+```bash
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run preview      # Preview production build
+```
+
+## License
+
+MIT - Feel free to use this for your own blog!
+
+---
+
+**Ready to start?** Check out [SETUP_GUIDE.md](SETUP_GUIDE.md) for next steps.
