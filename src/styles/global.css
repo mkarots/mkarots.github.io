@@ -17,59 +17,106 @@
 }
 
 :root {
-	--accent: #f97316;        /* Orange accent */
-	--accent-dark: #ea580c;   /* Darker orange */
+	--bg-primary: #1e2330;
+	--accent: #ff611f;
+	--accent-hover: #ff7a3d;
+	--text-primary: #e5e7eb;
+	--text-secondary: #9ca3af;
+	--border-color: #374151;
+}
+
+/* Light mode colors */
+:root:not(.dark) {
+	--bg-primary: #ffffff;
+	--accent: #005f9f;
+	--accent-hover: #004a7f;
+	--text-primary: #000000;
+	--text-secondary: #6b7280;
+	--border-color: #e5e7eb;
 }
 
 html {
 	@apply scroll-smooth;
+	background-color: var(--bg-primary);
 }
 
 body {
 	@apply antialiased;
-	font-family: "Atkinson", system-ui, -apple-system, sans-serif;
+	font-family: "Atkinson", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
 }
 
-/* Dark mode support */
+/* Dark mode */
 .dark {
 	color-scheme: dark;
 }
 
-/* Prose styles for blog content - minimal and clean */
+/* Prose styles for blog content */
 .prose {
 	@apply max-w-none;
+	color: var(--text-primary);
 }
 
 .prose h1 {
-	@apply text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100;
+	@apply text-3xl font-bold mb-4;
+	color: var(--accent);
 }
 
 .prose h2 {
-	@apply text-2xl font-bold mb-3 mt-8 text-gray-800 dark:text-gray-100;
+	@apply text-2xl font-bold mb-3 mt-8;
+	color: var(--accent);
 }
 
 .prose h3 {
-	@apply text-xl font-bold mb-2 mt-6 text-gray-800 dark:text-gray-100;
+	@apply text-xl font-bold mb-2 mt-6;
+	color: var(--accent);
 }
 
 .prose h4 {
-	@apply text-lg font-bold mb-2 mt-4 text-gray-800 dark:text-gray-100;
+	@apply text-lg font-bold mb-2 mt-4;
+	color: var(--accent);
 }
 
 .prose p {
-	@apply mb-4 text-gray-700 dark:text-gray-300 leading-relaxed;
+	@apply mb-4 leading-relaxed;
+	color: var(--text-primary);
 }
 
 .prose a {
-	@apply text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors;
+	color: var(--accent);
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.prose a:hover {
+	color: var(--accent-hover);
 }
 
 .prose code {
-	@apply px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono text-gray-800 dark:text-gray-200;
+	@apply px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+:root:not(.dark) .prose code {
+	background-color: #f3f4f6;
+	color: #1f2937;
+}
+
+.dark .prose code {
+	background-color: #1f2937;
+	color: #e5e7eb;
 }
 
 .prose pre {
-	@apply p-4 rounded-lg overflow-x-auto my-4 bg-gray-50 dark:bg-gray-900;
+	@apply p-4 rounded-lg overflow-x-auto my-4;
+}
+
+:root:not(.dark) .prose pre {
+	background-color: #f9fafb;
+}
+
+.dark .prose pre {
+	background-color: #1f2937;
 }
 
 .prose pre code {
@@ -77,15 +124,19 @@ body {
 }
 
 .prose blockquote {
-	@apply border-l-4 border-orange-500 dark:border-orange-400 pl-4 italic my-4 text-gray-600 dark:text-gray-400;
+	@apply pl-4 italic my-4;
+	border-left: 4px solid var(--accent);
+	color: var(--text-secondary);
 }
 
 .prose ul {
-	@apply list-disc list-inside mb-4 text-gray-700 dark:text-gray-300;
+	@apply list-disc list-inside mb-4;
+	color: var(--text-primary);
 }
 
 .prose ol {
-	@apply list-decimal list-inside mb-4 text-gray-700 dark:text-gray-300;
+	@apply list-decimal list-inside mb-4;
+	color: var(--text-primary);
 }
 
 .prose img {
@@ -97,15 +148,25 @@ body {
 }
 
 .prose th {
-	@apply bg-gray-50 dark:bg-gray-800 p-2 text-left font-bold;
+	@apply p-2 text-left font-bold;
+}
+
+:root:not(.dark) .prose th {
+	background-color: #f9fafb;
+}
+
+.dark .prose th {
+	background-color: #1f2937;
 }
 
 .prose td {
-	@apply border-t border-gray-200 dark:border-gray-700 p-2;
+	@apply p-2;
+	border-top: 1px solid var(--border-color);
 }
 
 .prose hr {
-	@apply my-8 border-gray-200 dark:border-gray-700;
+	@apply my-8;
+	border-color: var(--border-color);
 }
 
 /* Screen reader only */

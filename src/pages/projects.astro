@@ -1,0 +1,107 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+
+// Featured projects - customize these with your own
+const projects = [
+	{
+		name: 'project-name',
+		description: 'A brief description of what this project does and the problem it solves.',
+		url: 'https://github.com/mkarots/project-name',
+		language: 'TypeScript',
+	},
+	{
+		name: 'another-project',
+		description: 'Another project description highlighting key features or achievements.',
+		url: 'https://github.com/mkarots/another-project',
+		language: 'Python',
+	},
+	{
+		name: 'third-project',
+		description: 'Description of your third featured project and its impact.',
+		url: 'https://github.com/mkarots/third-project',
+		language: 'Go',
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Projects - ${SITE_TITLE}`} description="My open source projects and contributions" />
+	</head>
+	<body class="flex flex-col min-h-screen" style="background-color: var(--bg-primary);">
+		<Header />
+		<main class="flex-1">
+			<section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+				<h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">
+					Projects
+				</h1>
+				<p class="text-base italic mb-12" style="color: var(--text-primary);">
+					Open source projects and tools I've built.
+				</p>
+				
+				<div class="space-y-8">
+					{projects.map(project => (
+						<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
+							<a 
+								href={project.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="group block"
+							>
+								<div class="flex items-baseline justify-between gap-4 mb-2">
+									<h2 class="text-xl font-semibold font-mono project-title">
+										{project.name}
+									</h2>
+									<span class="text-sm font-mono" style="color: var(--text-secondary);">
+										{project.language}
+									</span>
+								</div>
+								<p style="color: var(--text-primary);">
+									{project.description}
+								</p>
+							</a>
+						</article>
+					))}
+				</div>
+
+				<div class="mt-12 pt-8" style="border-top: 1px solid var(--border-color);">
+					<p style="color: var(--text-secondary);">
+						Find more of my work on{' '}
+						<a 
+							href="https://github.com/mkarots"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="hover-link"
+						>
+							GitHub
+						</a>
+					</p>
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.project-title {
+		color: var(--accent);
+		transition: all 0.3s ease;
+	}
+	.project-title:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+		text-decoration-color: var(--accent);
+	}
+	.hover-link {
+		color: var(--accent);
+		transition: color 0.2s;
+	}
+	.hover-link:hover {
+		color: var(--accent-hover);
+	}
+</style>

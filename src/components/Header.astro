@@ -4,30 +4,28 @@ import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle';
 ---
 
-<header class="border-b border-gray-200 dark:border-gray-800">
+<header style="background-color: var(--bg-primary); border-bottom: 1px solid var(--border-color);">
 	<nav class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex justify-between items-center h-16">
-			<div class="flex items-center gap-8">
-				<h2 class="text-lg font-semibold">
-					<a href="/" class="text-gray-900 dark:text-gray-100 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
-						{SITE_TITLE}
-					</a>
-				</h2>
+			<h2 class="text-base font-semibold" style="color: var(--text-primary);">
+				<a href="/" class="hover:opacity-80 transition-opacity">
+					{SITE_TITLE}
+				</a>
+			</h2>
+			
+			<div class="flex items-center gap-6">
 				<div class="hidden sm:flex items-center gap-6">
 					<HeaderLink href="/blog">Posts</HeaderLink>
 					<HeaderLink href="/projects">Projects</HeaderLink>
-					<HeaderLink href="/resume">Resume</HeaderLink>
 				</div>
+				<ThemeToggle client:load />
 			</div>
-
-			<ThemeToggle client:load />
 		</div>
 
 		<!-- Mobile menu -->
 		<div class="sm:hidden pb-3 flex gap-4 text-sm">
 			<HeaderLink href="/blog">Posts</HeaderLink>
 			<HeaderLink href="/projects">Projects</HeaderLink>
-			<HeaderLink href="/resume">Resume</HeaderLink>
 		</div>
 	</nav>
 </header>
