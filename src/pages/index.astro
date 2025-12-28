@@ -5,6 +5,10 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { projects } from '../projects.config';
+
+// Create project lookup map
+const projectMap = new Map(projects.map(p => [p.slug, p]));
 
 // Get recent blog posts
 const posts = (await getCollection('blog'))
@@ -12,27 +16,8 @@ const posts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 6);
 
-// Featured projects - customize these with your own
-const projects = [
-	{
-		name: 'project-name',
-		description: 'A brief description of what this project does and the problem it solves.',
-		url: 'https://github.com/mkarots/project-name',
-		language: 'TypeScript',
-	},
-	{
-		name: 'another-project',
-		description: 'Another project description highlighting key features or achievements.',
-		url: 'https://github.com/mkarots/another-project',
-		language: 'Python',
-	},
-	{
-		name: 'third-project',
-		description: 'Description of your third featured project and its impact.',
-		url: 'https://github.com/mkarots/third-project',
-		language: 'Go',
-	},
-];
+// Get all projects for homepage
+const allProjects = projects;
 ---
 
 <!doctype html>
@@ -95,31 +80,45 @@ const projects = [
 			</section>
 
 			<!-- Projects Section -->
-			<section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="border-top: 1px solid var(--border-color);">
+			<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="border-top: 1px solid var(--border-color);">
 				<h2 class="text-2xl font-bold mb-8" style="color: var(--text-primary);">
 					Projects
 				</h2>
-				<div class="space-y-6">
-					{projects.map(project => (
-						<article class="pb-6 last:border-0" style="border-bottom: 1px solid var(--border-color);">
-							<a 
-								href={project.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="group block"
-							>
-								<div class="flex items-baseline justify-between gap-4 mb-2">
-									<h3 class="text-lg font-semibold font-mono project-title">
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+					{allProjects.map(project => (
+						<article 
+							class="p-6 rounded-lg border transition-all hover:shadow-lg"
+							style="border-color: var(--border-color); background-color: var(--bg-primary);"
+						>
+							<div class="flex items-start justify-between gap-3 mb-3">
+								<h3 class="text-lg font-semibold font-mono project-title flex-1">
+									<a href={`/projects/${project.slug}`} class="hover:opacity-80 transition-opacity">
 										{project.name}
-									</h3>
-									<span class="text-sm font-mono" style="color: var(--text-secondary);">
-										{project.language}
-									</span>
-								</div>
-								<p style="color: var(--text-secondary);">
-									{project.description}
-								</p>
-							</a>
+									</a>
+								</h3>
+								<span class="text-xs font-mono whitespace-nowrap" style="color: var(--text-secondary);">
+									{project.language}
+								</span>
+							</div>
+							<p style="color: var(--text-secondary);" class="text-sm mb-4 line-clamp-3">
+								{project.description}
+							</p>
+							<div class="flex gap-3 text-sm">
+								<a 
+									href={`/projects/${project.slug}`}
+									class="hover-link text-xs"
+								>
+									View →
+								</a>
+								<a 
+									href={project.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="hover-link text-xs"
+								>
+									GitHub →
+								</a>
+							</div>
 						</article>
 					))}
 				</div>
@@ -141,21 +140,36 @@ const projects = [
 					Recent Posts
 				</h2>
 				<div class="space-y-8">
-					{posts.map(post => (
-						<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
-							<a href={`/blog/${post.id}/`} class="group block">
-								<h3 class="text-xl font-semibold mb-2 post-title">
-									{post.data.title}
-								</h3>
-								<div class="mb-2 text-sm" style="color: var(--text-primary);">
-									<FormattedDate date={post.data.pubDate} />
-								</div>
-								<p style="color: var(--text-primary);">
-									{post.data.description}
-								</p>
-							</a>
-						</article>
-					))}
+					{posts.map(post => {
+						const project = post.data.project ? projectMap.get(post.data.project) : null;
+						return (
+							<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
+								<a href={`/blog/${post.id}/`} class="group block">
+									<div class="flex items-baseline gap-4 mb-2">
+										<time class="text-sm font-mono" style="color: var(--text-secondary);">
+											<FormattedDate date={post.data.pubDate} />
+										</time>
+										{project && (
+											<a 
+												href={`/projects/${project.slug}`}
+												onclick={(e) => e.stopPropagation()}
+												class="text-xs font-mono px-2 py-1 rounded"
+												style="background-color: var(--accent); color: white;"
+											>
+												{project.name}
+											</a>
+										)}
+									</div>
+									<h3 class="text-xl font-semibold mb-2 post-title">
+										{post.data.title}
+									</h3>
+									<p style="color: var(--text-secondary);">
+										{post.data.description}
+									</p>
+								</a>
+							</article>
+						);
+					})}
 				</div>
 				<div class="mt-8 pt-8" style="border-top: 1px solid var(--border-color);">
 					<a 

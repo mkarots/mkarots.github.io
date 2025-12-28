@@ -3,6 +3,7 @@ title: 'Building Better Developer Tools: Lessons from the Trenches'
 description: 'What I learned building developer tools and how to create tools that developers actually want to use'
 pubDate: 2024-12-15
 heroImage: '../../assets/blog-placeholder-1.jpg'
+project: 'project-name'
 ---
 
 Building developer tools is hard. Not because the technical challenges are insurmountable, but because creating tools that developers actually want to use requires understanding their workflows, pain points, and the subtle ways they interact with their development environment.

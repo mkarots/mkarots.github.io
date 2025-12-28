@@ -1,0 +1,132 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+import { projects } from '../../projects.config';
+
+export async function getStaticPaths() {
+	return projects.map(project => ({
+		params: { slug: project.slug },
+		props: { project },
+	}));
+}
+
+const { project } = Astro.props;
+const { slug } = Astro.params;
+
+// Get all posts for this project
+const allPosts = await getCollection('blog');
+const projectPosts = allPosts
+	.filter(post => post.data.project === slug)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+---
+
+<html lang="en">
+	<head>
+		<BaseHead 
+			title={`${project.name} - Projects - ${SITE_TITLE}`} 
+			description={project.description} 
+		/>
+	</head>
+	<body class="flex flex-col min-h-screen" style="background-color: var(--bg-primary);">
+		<Header />
+		<main class="flex-1">
+			<article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+				<!-- Back link -->
+				<a 
+					href="/projects" 
+					class="inline-block mb-8 text-sm hover-link"
+				>
+					← Back to Projects
+				</a>
+
+				<!-- Project Header -->
+				<header class="mb-12">
+					<div class="flex items-baseline justify-between gap-4 mb-4">
+						<h1 class="text-3xl md:text-4xl font-bold font-mono" style="color: var(--accent);">
+							{project.name}
+						</h1>
+						<span class="text-sm font-mono" style="color: var(--text-secondary);">
+							{project.language}
+						</span>
+					</div>
+					<p class="text-lg mb-6" style="color: var(--text-primary);">
+						{project.description}
+					</p>
+					<div class="flex gap-4">
+						<a 
+							href={project.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="hover-link"
+						>
+							View on GitHub →
+						</a>
+					</div>
+				</header>
+
+				<!-- Project Posts -->
+				{projectPosts.length > 0 ? (
+					<section class="mt-12 pt-12" style="border-top: 1px solid var(--border-color);">
+						<h2 class="text-2xl font-bold mb-8" style="color: var(--accent);">
+							Related Posts
+							<span class="text-base font-normal ml-2" style="color: var(--text-secondary);">
+								({projectPosts.length})
+							</span>
+						</h2>
+						<div class="space-y-8">
+							{projectPosts.map(post => (
+								<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
+									<a href={`/blog/${post.id}/`} class="group block">
+										<div class="flex items-baseline gap-4 mb-2">
+											<time class="text-sm font-mono" style="color: var(--text-secondary);">
+												<FormattedDate date={post.data.pubDate} />
+											</time>
+										</div>
+										<h3 class="text-xl font-semibold mb-2 post-title">
+											{post.data.title}
+										</h3>
+										<p style="color: var(--text-secondary);">
+											{post.data.description}
+										</p>
+									</a>
+								</article>
+							))}
+						</div>
+					</section>
+				) : (
+					<section class="mt-12 pt-12" style="border-top: 1px solid var(--border-color);">
+						<p style="color: var(--text-secondary);">
+							No posts yet for this project. Check back soon!
+						</p>
+					</section>
+				)}
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.post-title {
+		color: var(--accent);
+		transition: all 0.3s ease;
+	}
+	.post-title:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+		text-decoration-color: var(--accent);
+	}
+	.hover-link {
+		color: var(--text-secondary);
+		transition: color 0.2s;
+	}
+	.hover-link:hover {
+		color: var(--accent);
+	}
+</style>
+

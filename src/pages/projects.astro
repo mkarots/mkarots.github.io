@@ -1,30 +1,21 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_TITLE } from '../consts';
+import { projects } from '../projects.config';
 
-// Featured projects - customize these with your own
-const projects = [
-	{
-		name: 'project-name',
-		description: 'A brief description of what this project does and the problem it solves.',
-		url: 'https://github.com/mkarots/project-name',
-		language: 'TypeScript',
-	},
-	{
-		name: 'another-project',
-		description: 'Another project description highlighting key features or achievements.',
-		url: 'https://github.com/mkarots/another-project',
-		language: 'Python',
-	},
-	{
-		name: 'third-project',
-		description: 'Description of your third featured project and its impact.',
-		url: 'https://github.com/mkarots/third-project',
-		language: 'Go',
-	},
-];
+// Get all blog posts to count posts per project
+const allPosts = await getCollection('blog');
+const postsByProject = new Map<string, number>();
+
+allPosts.forEach(post => {
+	if (post.data.project) {
+		const count = postsByProject.get(post.data.project) || 0;
+		postsByProject.set(post.data.project, count + 1);
+	}
+});
 ---
 
 <!doctype html>
@@ -35,7 +26,7 @@ const projects = [
 	<body class="flex flex-col min-h-screen" style="background-color: var(--bg-primary);">
 		<Header />
 		<main class="flex-1">
-			<section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+			<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 				<h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">
 					Projects
 				</h1>
@@ -43,29 +34,53 @@ const projects = [
 					Open source projects and tools I've built.
 				</p>
 				
-				<div class="space-y-8">
-					{projects.map(project => (
-						<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
-							<a 
-								href={project.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="group block"
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+					{projects.map(project => {
+						const postCount = postsByProject.get(project.slug) || 0;
+						return (
+							<article 
+								class="p-6 rounded-lg border transition-all hover:shadow-lg"
+								style="border-color: var(--border-color); background-color: var(--bg-primary);"
 							>
-								<div class="flex items-baseline justify-between gap-4 mb-2">
-									<h2 class="text-xl font-semibold font-mono project-title">
-										{project.name}
+								<div class="flex items-start justify-between gap-3 mb-3">
+									<h2 class="text-lg font-semibold font-mono project-title flex-1">
+										<a href={`/projects/${project.slug}`} class="hover:opacity-80 transition-opacity">
+											{project.name}
+										</a>
 									</h2>
-									<span class="text-sm font-mono" style="color: var(--text-secondary);">
+									<span class="text-xs font-mono whitespace-nowrap" style="color: var(--text-secondary);">
 										{project.language}
 									</span>
 								</div>
-								<p style="color: var(--text-primary);">
+								<p style="color: var(--text-secondary);" class="text-sm mb-4 line-clamp-3">
 									{project.description}
 								</p>
-							</a>
-						</article>
-					))}
+								<div class="flex items-center justify-between gap-3 text-sm">
+									{postCount > 0 && (
+										<span class="text-xs font-mono" style="color: var(--text-secondary);">
+											{postCount} {postCount === 1 ? 'post' : 'posts'}
+										</span>
+									)}
+									<div class="flex gap-3 ml-auto">
+										<a 
+											href={`/projects/${project.slug}`}
+											class="hover-link text-xs"
+										>
+											View →
+										</a>
+										<a 
+											href={project.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="hover-link text-xs"
+										>
+											GitHub →
+										</a>
+									</div>
+								</div>
+							</article>
+						);
+					})}
 				</div>
 
 				<div class="mt-12 pt-8" style="border-top: 1px solid var(--border-color);">

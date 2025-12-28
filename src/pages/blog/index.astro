@@ -5,10 +5,22 @@ import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { projects } from '../../projects.config';
 
-const posts = (await getCollection('blog'))
+// Get filter from URL query params
+const projectFilter = Astro.url.searchParams.get('project');
+
+let posts = (await getCollection('blog'))
 	.filter(post => !post.data.draft)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Filter by project if specified
+if (projectFilter) {
+	posts = posts.filter(post => post.data.project === projectFilter);
+}
+
+// Create project lookup map
+const projectMap = new Map(projects.map(p => [p.slug, p]));
 ---
 
 <!doctype html>
@@ -20,29 +32,60 @@ const posts = (await getCollection('blog'))
 		<Header />
 		<main class="flex-1">
 			<section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				<h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">
-					Posts
-				</h1>
-				<p class="text-base italic mb-12" style="color: var(--text-primary);">
-					All the articles I've posted.
-				</p>
-				<div class="space-y-8">
-					{posts.map(post => (
-						<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
-							<a href={`/blog/${post.id}/`} class="group block">
-								<h2 class="text-xl font-semibold mb-2 post-title">
-									{post.data.title}
-								</h2>
-								<div class="mb-2 text-sm" style="color: var(--text-primary);">
-									<FormattedDate date={post.data.pubDate} />
-								</div>
-								<p style="color: var(--text-primary);">
-									{post.data.description}
-								</p>
-							</a>
-						</article>
-					))}
+				<div class="flex items-baseline justify-between gap-4 mb-2">
+					<h1 class="text-3xl font-bold" style="color: var(--text-primary);">
+						{projectFilter ? `Posts: ${projectMap.get(projectFilter)?.name || projectFilter}` : 'Posts'}
+					</h1>
+					{projectFilter && (
+						<a href="/blog" class="text-sm hover-link">
+							Clear filter
+						</a>
+					)}
 				</div>
+				<p class="text-base italic mb-8" style="color: var(--text-primary);">
+					{projectFilter 
+						? `Posts related to ${projectMap.get(projectFilter)?.name || projectFilter}.`
+						: 'All the articles I\'ve posted.'}
+				</p>
+				
+				{posts.length > 0 ? (
+					<div class="space-y-8">
+						{posts.map(post => {
+							const project = post.data.project ? projectMap.get(post.data.project) : null;
+							return (
+								<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
+									<a href={`/blog/${post.id}/`} class="group block">
+										<div class="flex items-baseline gap-4 mb-2">
+											<time class="text-sm font-mono" style="color: var(--text-secondary);">
+												<FormattedDate date={post.data.pubDate} />
+											</time>
+											{project && (
+												<a 
+													href={`/blog?project=${project.slug}`}
+													onclick={(e) => e.stopPropagation()}
+													class="text-xs font-mono px-2 py-1 rounded"
+													style="background-color: var(--accent); color: white;"
+												>
+													{project.name}
+												</a>
+											)}
+										</div>
+										<h2 class="text-xl font-semibold mb-2 post-title">
+											{post.data.title}
+										</h2>
+										<p style="color: var(--text-secondary);">
+											{post.data.description}
+										</p>
+									</a>
+								</article>
+							);
+						})}
+					</div>
+				) : (
+					<p style="color: var(--text-secondary);">
+						{projectFilter ? 'No posts found for this project.' : 'No posts yet.'}
+					</p>
+				)}
 			</section>
 		</main>
 		<Footer />
