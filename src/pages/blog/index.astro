@@ -29,7 +29,7 @@ const posts = (await getCollection('blog'))
 				<div class="space-y-8">
 					{posts.map(post => (
 						<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
-							<a href={`/blog/${post.slug}/`} class="group block">
+							<a href={`/blog/${post.id}/`} class="group block">
 								<h2 class="text-xl font-semibold mb-2 post-title">
 									{post.data.title}
 								</h2>
