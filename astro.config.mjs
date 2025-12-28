@@ -10,7 +10,6 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://mkarots.github.io',
-  base: '/blogfolio/',
   integrations: [mdx(), sitemap(), react()],
   markdown: {
     shikiConfig: {
