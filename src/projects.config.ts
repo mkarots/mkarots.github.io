@@ -29,13 +29,13 @@ export const projects = [
 		url: 'https://codii.dev',
 		language: 'Python & TypeScript',
 	},
-	// {
-	// 	slug: 'tinyrag',
-	// 	name: 'TinyRAG',
-	// 	description: 'TinyRAG is a tiny RAG library that makes it easy to build small scale RAG applications.',
-	// 	url: 'https://github.com/mkarots/tinyrag',
-	// 	language: 'Python',
-	// },
+	{
+		slug: 'raglet',
+		name: 'raglet',
+		description: 'Portable memory for small text corpora. No servers, no API keys, no infrastructure.',
+		url: 'https://github.com/mkarots/raglet',
+		language: 'Python',
+	},
 ] as const;
 
 export type ProjectSlug = typeof projects[number]['slug'];
