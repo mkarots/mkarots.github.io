@@ -2,6 +2,7 @@
 title: "Poking Around ChatGPT's Sandbox"
 description: "An exploration of what ChatGPT's code execution environment can and can't do — filesystem access, process introspection, networking, and the curious 'prove it' prompting pattern."
 pubDate: 2025-03-25
+heroImage: '../../assets/sandbox-15-openai-support.png'
 ---
 
 import { Image } from 'astro:assets';
@@ -54,7 +55,7 @@ If you have one minute, here's what I found.
 
 ### Why it matters
 
-Users interpret refusals as hard limitations, but they're not. The model's refusals are a policy decision, not a security boundary — the actual isolation comes from the sandbox itself. If you're building systems like this, the model's self-description of its capabilities needs to be reliable. Otherwise you create a trust problem even when the underlying security is sound.
+Users interpret refusals as hard limitations, but they're not. The model's refusals are a policy decision, not a security boundary — the actual isolation comes from the sandbox itself. If you're building agentic systems, the model's ability to reliably describe what it can and can't do is worth getting right — users and downstream systems will make decisions based on what the model tells them.
 
 ---
 
