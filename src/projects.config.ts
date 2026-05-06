@@ -36,6 +36,13 @@ export const projects = [
 		url: 'https://github.com/mkarots/raglet',
 		language: 'Python',
 	},
+	{
+		slug: 'spek',
+		name: 'spek',
+		description: 'Agentic spec-to-code builder: turn a SPEC.md into an installable, tested package.',
+		url: 'https://github.com/mkarots/spek',
+		language: 'Python',
+	},
 ] as const;
 
 export type ProjectSlug = typeof projects[number]['slug'];
