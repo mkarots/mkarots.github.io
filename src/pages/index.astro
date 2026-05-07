@@ -144,22 +144,21 @@ const allProjects = projects;
 						const project = post.data.project ? projectMap.get(post.data.project) : null;
 						return (
 							<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
+								<div class="flex items-baseline gap-4 mb-2">
+									<time class="text-sm font-mono" style="color: var(--text-secondary);">
+										<FormattedDate date={post.data.pubDate} />
+									</time>
+									{project && (
+										<a
+											href={`/projects/${project.slug}`}
+											class="text-xs font-mono px-2 py-1 rounded"
+											style="background-color: var(--accent); color: white;"
+										>
+											{project.name}
+										</a>
+									)}
+								</div>
 								<a href={`/blog/${post.id}/`} class="group block">
-									<div class="flex items-baseline gap-4 mb-2">
-										<time class="text-sm font-mono" style="color: var(--text-secondary);">
-											<FormattedDate date={post.data.pubDate} />
-										</time>
-										{project && (
-											<a 
-												href={`/projects/${project.slug}`}
-												onclick={(e) => e.stopPropagation()}
-												class="text-xs font-mono px-2 py-1 rounded"
-												style="background-color: var(--accent); color: white;"
-											>
-												{project.name}
-											</a>
-										)}
-									</div>
 									<h3 class="text-xl font-semibold mb-2 post-title">
 										{post.data.title}
 									</h3>
