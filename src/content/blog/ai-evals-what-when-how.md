@@ -168,7 +168,7 @@ For each domain, company, or project, the requirements for a robust and scalable
 
 - [OpenAI Evals](https://github.com/openai/evals) — OpenAI's open-source framework for evaluating LLMs and LLM systems.
 - [Anthropic Evals](https://docs.claude.com/en/docs/test-and-evaluate/eval-tool) — Anthropic's docs on building evaluations, plus the [cookbook recipes](https://github.com/anthropics/anthropic-cookbook).
-- [Mistral Evals](https://docs.mistral.ai/capabilities/evaluation/) — Mistral's evaluation capabilities.
+- [Mistral Evals](https://github.com/mistralai/mistral-evals) — Mistral's evaluation capabilities.
 
 **Optimization-oriented**
 
