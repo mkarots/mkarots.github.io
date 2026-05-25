@@ -156,6 +156,8 @@ For each domain, company, or project, the requirements for a robust and scalable
 
 **Eval and observability platforms**
 
+*Disclosure: I work at [Composo](https://www.composo.ai/).*
+
 - [Composo](https://www.composo.ai/) — deterministic eval API and failure-mode discovery for production AI agents.
 - [Braintrust](https://www.braintrust.dev/) — end-to-end evals, prompt playground, and observability.
 - [LangSmith](https://www.langchain.com/langsmith) — evals, tracing, and monitoring from the LangChain team.
