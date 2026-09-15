@@ -1,0 +1,70 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from './BaseHead.astro';
+import Footer from './Footer.astro';
+import Header from './Header.astro';
+import Stream from './Stream.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+interface Props {
+	heading: string;
+	lede: string;
+	posts: CollectionEntry<'blog'>[];
+	emptyText: string;
+	clearHref?: string;
+	clearLabel?: string;
+}
+
+const {
+	heading,
+	lede,
+	posts,
+	emptyText,
+	clearHref,
+	clearLabel = 'Clear filter',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${heading} - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body class="flex flex-col min-h-screen" style="background-color: var(--bg-primary);">
+		<Header />
+		<main class="flex-1">
+			<section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+				<div class="flex items-baseline justify-between gap-4 mb-2">
+					<h1 class="text-3xl font-bold" style="color: var(--text-primary);">
+						{heading}
+					</h1>
+					{clearHref && (
+						<a href={clearHref} class="text-sm hover-link">
+							{clearLabel}
+						</a>
+					)}
+				</div>
+				<p class="text-base italic mb-8" style="color: var(--text-primary);">
+					{lede}
+				</p>
+
+				{posts.length > 0 ? (
+					<Stream posts={posts} />
+				) : (
+					<p style="color: var(--text-secondary);">{emptyText}</p>
+				)}
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.hover-link {
+		color: var(--text-secondary);
+		transition: color 0.2s;
+	}
+	.hover-link:hover {
+		color: var(--accent);
+	}
+</style>

@@ -1,0 +1,30 @@
+---
+import BlogRiverPage from '../../../components/BlogRiverPage.astro';
+import { getPublishedPosts } from '../../../lib/posts';
+import { projects } from '../../../projects.config';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+	const slugs = [
+		...new Set(
+			posts
+				.map((post) => post.data.project)
+				.filter((value): value is string => Boolean(value)),
+		),
+	];
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const posts = (await getPublishedPosts()).filter((post) => post.data.project === slug);
+const project = projects.find((entry) => entry.slug === slug);
+const name = project?.name ?? slug;
+---
+
+<BlogRiverPage
+	heading={`Posts: ${name}`}
+	lede={`Posts related to ${name}.`}
+	posts={posts}
+	emptyText="No posts found for this project."
+	clearHref="/blog"
+/>

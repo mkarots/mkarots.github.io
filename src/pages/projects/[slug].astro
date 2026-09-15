@@ -1,10 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
+import Stream from '../../components/Stream.astro';
 import { SITE_TITLE } from '../../consts';
+import { getPublishedPosts } from '../../lib/posts';
 import { projects } from '../../projects.config';
 
 export async function getStaticPaths() {
@@ -17,11 +17,9 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { slug } = Astro.params;
 
-// Get all posts for this project
-const allPosts = await getCollection('blog');
-const projectPosts = allPosts
-	.filter(post => post.data.project === slug)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const projectPosts = (await getPublishedPosts()).filter(
+	(post) => post.data.project === slug,
+);
 
 ---
 
@@ -78,25 +76,7 @@ const projectPosts = allPosts
 								({projectPosts.length})
 							</span>
 						</h2>
-						<div class="space-y-8">
-							{projectPosts.map(post => (
-								<article class="pb-8 last:border-0" style="border-bottom: 1px solid var(--border-color);">
-									<a href={`/blog/${post.id}/`} class="group block">
-										<div class="flex items-baseline gap-4 mb-2">
-											<time class="text-sm font-mono" style="color: var(--text-secondary);">
-												<FormattedDate date={post.data.pubDate} />
-											</time>
-										</div>
-										<h3 class="text-xl font-semibold mb-2 post-title">
-											{post.data.title}
-										</h3>
-										<p style="color: var(--text-secondary);">
-											{post.data.description}
-										</p>
-									</a>
-								</article>
-							))}
-						</div>
+						<Stream posts={projectPosts} />
 					</section>
 				) : (
 					<section class="mt-12 pt-12" style="border-top: 1px solid var(--border-color);">
@@ -112,15 +92,6 @@ const projectPosts = allPosts
 </html>
 
 <style>
-	.post-title {
-		color: var(--accent);
-		transition: all 0.3s ease;
-	}
-	.post-title:hover {
-		color: var(--accent-hover);
-		text-decoration: underline;
-		text-decoration-color: var(--accent);
-	}
 	.hover-link {
 		color: var(--text-secondary);
 		transition: color 0.2s;

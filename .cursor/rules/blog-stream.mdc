@@ -1,0 +1,43 @@
+---
+description: Conventions for writing posts in the homepage river
+globs: src/content/blog/**/*.{md,mdx}
+alwaysApply: false
+---
+
+# Blog river posts
+
+The homepage is a chronological stream. Write the opening so the feed is useful without opening the permalink.
+
+## Choose a type
+
+- `entry` (default): an essay. The river shows the first markdown block (or everything before `<!--more-->`) plus `[... N words]`.
+- `link`: an annotated URL. Set `linkUrl`. The river shows the **full** body; the title points at the source.
+
+```yaml
+type: link
+title: "Concrete title of the thing you're linking"
+linkUrl: https://example.com/post
+viaUrl: https://optional-source.example   # optional
+viaTitle: Optional label
+project: tinysh                          # optional, must match projects.config.ts
+tags: [shells, c]                        # optional, freeform
+```
+
+## Entries
+
+- First paragraph is the briefing: what this is, why it matters, with real links.
+- Do not open with a teaser that only makes sense after a click.
+- Use `<!--more-->` when the first paragraph is a series note and you want a richer slice in the river.
+- `description` is SEO/RSS, not the river excerpt.
+
+## Links
+
+- Publish whenever something is worth pointing at. A few sentences of commentary is enough.
+- Keep nested links, code, and lists in the body — they stay live in the feed.
+- Still give the post a local slug; the date in the river is the permalink.
+
+## Tags vs project
+
+- `project`: at most one, a slug from `src/projects.config.ts`. Powers `/blog/project/<slug>` and homepage chips.
+- `tags`: extra facets (`/blog/tag/<tag>`). Use lowercase, hyphenated, sparingly (topic, not every keyword).
+- Full playbook: `BLOGGING.md`.

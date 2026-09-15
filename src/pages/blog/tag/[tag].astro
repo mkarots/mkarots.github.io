@@ -1,0 +1,22 @@
+---
+import BlogRiverPage from '../../../components/BlogRiverPage.astro';
+import { getPublishedPosts, uniqueTags } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+	return uniqueTags(posts).map((tag) => ({ params: { tag } }));
+}
+
+const { tag } = Astro.params;
+const posts = (await getPublishedPosts()).filter((post) =>
+	post.data.tags.includes(tag ?? ''),
+);
+---
+
+<BlogRiverPage
+	heading={`Posts: ${tag}`}
+	lede={`Posts tagged ${tag}.`}
+	posts={posts}
+	emptyText="No posts found for this tag."
+	clearHref="/blog"
+/>

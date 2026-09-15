@@ -5,15 +5,31 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION } from '../consts';
+import { projects } from '../projects.config';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	type = 'entry',
+	linkUrl,
+	project: projectSlug,
+	tags = [],
+} = Astro.props;
+
+const project = projectSlug
+	? projects.find((entry) => entry.slug === projectSlug)
+	: undefined;
 ---
 
 <html lang="en">
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead title={title} description={description ?? SITE_DESCRIPTION} image={heroImage} />
 	</head>
 
 	<body class="flex flex-col min-h-screen bg-white dark:bg-gray-900">
@@ -22,16 +38,16 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			<article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 				{heroImage && (
 					<div class="mb-8">
-						<Image 
-							width={1020} 
-							height={510} 
-							src={heroImage} 
+						<Image
+							width={1020}
+							height={510}
+							src={heroImage}
 							alt={title}
 							class="rounded-lg w-full"
 						/>
 					</div>
 				)}
-				
+
 				<header class="mb-12">
 					<div class="text-sm text-gray-500 dark:text-gray-500 mb-4 font-mono">
 						<FormattedDate date={pubDate} />
@@ -44,13 +60,33 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					<h1 class="text-3xl md:text-4xl font-bold text-orange-600 dark:text-orange-400 mb-4">
 						{title}
 					</h1>
-					{description && (
+					{type === 'link' && linkUrl && (
+						<p class="text-lg mb-4">
+							<a href={linkUrl} target="_blank" rel="noopener noreferrer" class="source-link">
+								{linkUrl}
+							</a>
+						</p>
+					)}
+					{type === 'entry' && description && (
 						<p class="text-lg text-gray-600 dark:text-gray-400">
 							{description}
 						</p>
 					)}
+					{(project || tags.length > 0) && (
+						<p class="mt-4 text-sm font-mono" style="color: var(--text-secondary);">
+							{project && (
+								<a href={`/blog/project/${project.slug}`} class="meta-link">{project.name}</a>
+							)}
+							{tags.map((tag, index) => (
+								<span>
+									{(project || index > 0) && <span> · </span>}
+									<a href={`/blog/tag/${encodeURIComponent(tag)}`} class="meta-link">{tag}</a>
+								</span>
+							))}
+						</p>
+					)}
 				</header>
-				
+
 				<div class="prose prose-lg max-w-none">
 					<slot />
 				</div>
@@ -59,3 +95,16 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.source-link,
+	.meta-link {
+		color: var(--accent);
+		text-decoration: none;
+	}
+	.source-link:hover,
+	.meta-link:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+</style>

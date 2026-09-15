@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDayHeading, groupByDay, toStreamItem } from '../lib/stream';
+import StreamItem from './StreamItem.astro';
+
+interface Props {
+	posts: CollectionEntry<'blog'>[];
+	showDayHeaders?: boolean;
+}
+
+const { posts, showDayHeaders = true } = Astro.props;
+const items = posts.map((post) => ({
+	...toStreamItem(post),
+	heroImage: post.data.heroImage,
+}));
+const groups = showDayHeaders
+	? groupByDay(items)
+	: [{ date: items[0]?.pubDate ?? new Date(), items }];
+---
+
+<div class="stream">
+	{groups.map((group) => (
+		<section class="stream-day">
+			{showDayHeaders && (
+				<h2 class="stream-day-heading">{formatDayHeading(group.date)}</h2>
+			)}
+			{group.items.map((item) => (
+				<StreamItem item={item} heroImage={item.heroImage} />
+			))}
+		</section>
+	))}
+</div>
+
+<style>
+	.stream-day + .stream-day {
+		margin-top: 2.5rem;
+	}
+
+	.stream-day-heading {
+		font-size: 1.65rem;
+		font-weight: 700;
+		margin-bottom: 1.25rem;
+		color: var(--text-primary);
+	}
+</style>
