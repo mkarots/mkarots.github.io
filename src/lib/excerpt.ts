@@ -1,4 +1,4 @@
-const MORE_MARKER = '<!--more-->';
+const MORE_MARKER = /<!--more-->|\{\/\*\s*more\s*\*\/\}/;
 
 export function stripMdxPreamble(body: string): string {
 	const lines = body.split('\n');
@@ -48,10 +48,10 @@ export function extractExcerptMarkdown(body: string): {
 		return { excerpt: '', hasMore: false };
 	}
 
-	const moreIndex = cleaned.indexOf(MORE_MARKER);
-	if (moreIndex !== -1) {
+	const moreMatch = MORE_MARKER.exec(cleaned);
+	if (moreMatch && moreMatch.index !== undefined) {
 		return {
-			excerpt: cleaned.slice(0, moreIndex).trim(),
+			excerpt: cleaned.slice(0, moreMatch.index).trim(),
 			hasMore: true,
 		};
 	}

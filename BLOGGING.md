@@ -8,7 +8,7 @@ Posts live in `src/content/blog/` as Markdown or MDX.
 
 | Type | Use for | What the river shows | Title points to |
 | --- | --- | --- | --- |
-| `entry` (default) | An essay, walkthrough, or series chapter | First markdown block, or everything before `<!--more-->`, plus `[... N words]` | Local permalink `/blog/<slug>/` |
+| `entry` (default) | An essay, walkthrough, or series chapter | First markdown block, or everything before the more marker, plus `[... N words]` | Local permalink `/blog/<slug>/` |
 | `link` | An annotated URL | The **full** body | `linkUrl` (the source). The date in the footer is the local permalink |
 
 If you found something worth pointing at, write a **link** post. Do not wait until it is an essay. The river only feels like Simon’s once short annotated links mix with longer entries.
@@ -58,7 +58,7 @@ Do not open with a hook that only makes sense after a click.
 
 ### `<!--more-->`
 
-By default the river takes the first markdown block (stop at the first blank line, skip a leading heading). If that block is a series disclaimer or otherwise weak, put `<!--more-->` after a better slice:
+By default the river takes the first markdown block (stop at the first blank line, skip a leading heading). If that block is a series disclaimer or otherwise weak, put a more marker after a better slice. Use `<!--more-->` in `.md` files and `{/* more */}` in `.mdx` (HTML comments break MDX):
 
 ```markdown
 *This is Part 1 of a series...*
@@ -114,7 +114,7 @@ Prefer plain Markdown for **link** posts. The river renders link bodies with a s
 
 1. Type is `entry` or `link` (and `linkUrl` is set if `link`)
 2. Opening slice is useful on its own, with links if they matter
-3. `<!--more-->` is in the right place if the first block is not the briefing
+3. The more marker is in the right place if the first block is not the briefing (`<!--more-->` in `.md`, `{/* more */}` in `.mdx`)
 4. `project` matches a slug in `projects.config.ts`, or is omitted
 5. Tags are sparse, lowercase, hyphenated
 6. `description` exists if you care about search / RSS cards

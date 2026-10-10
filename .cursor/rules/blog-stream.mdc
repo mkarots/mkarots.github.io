@@ -27,7 +27,7 @@ tags: [shells, c]                        # optional, freeform
 
 - First paragraph is the briefing: what this is, why it matters, with real links.
 - Do not open with a teaser that only makes sense after a click.
-- Use `<!--more-->` when the first paragraph is a series note and you want a richer slice in the river.
+- Use `<!--more-->` in `.md` (or `{/* more */}` in `.mdx`) when the first paragraph is a series note and you want a richer slice in the river.
 - `description` is SEO/RSS, not the river excerpt.
 
 ## Links

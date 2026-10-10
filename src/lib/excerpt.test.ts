@@ -53,8 +53,16 @@ describe('extractExcerptMarkdown', () => {
 		});
 	});
 
-	it('uses the explicit more marker', () => {
+	it('uses the explicit HTML more marker', () => {
 		const body = 'Keep this.\n\nAlso this.\n\n<!--more-->\n\nHidden.';
+		expect(extractExcerptMarkdown(body)).toEqual({
+			excerpt: 'Keep this.\n\nAlso this.',
+			hasMore: true,
+		});
+	});
+
+	it('uses the MDX more comment', () => {
+		const body = 'Keep this.\n\nAlso this.\n\n{/* more */}\n\nHidden.';
 		expect(extractExcerptMarkdown(body)).toEqual({
 			excerpt: 'Keep this.\n\nAlso this.',
 			hasMore: true,
