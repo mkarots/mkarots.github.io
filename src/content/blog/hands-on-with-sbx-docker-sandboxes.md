@@ -161,11 +161,6 @@ In the session:
 Read TASK.md and complete it.
 ```
 
-### Gotchas I hit
-
-1. **Agent login.** Claude may start logged out. Run `/login` inside the sandbox before it can call the model. (Docker also documents host-side `sbx secret set` so the proxy can inject provider credentials without storing them in the VM — I have not re-run this example that way yet.)
-2. **Host `.venv`.** If you created a virtualenv on the Mac under `playground/`, it will not run in the Linux sandbox. Leave it alone; have the agent use a separate env (for example under `/tmp`) with **Python 3.12** to match the Dockerfile. The sandbox’s default Python was 3.14 in my run and could not install `psycopg[binary]==3.2.3`.
-
 ### What “done” looked like for me
 
 The agent listed the tree, patched three bugs, ran pytest (8 passed), brought Compose up, and verified health + create/get. Edits showed up on the host immediately because of the direct mount — `git diff` under `playground/` is the review surface.
@@ -198,15 +193,15 @@ Example from my run:
 
 ## Conclusions
 
-The walkthrough above is a simple use case of a coding task that one agent on a laptop can run, created for the purposes of showing how to use the CLI tool. Further from that, I think that the vision behind Docker Sandboxes is larger than just providing a component. I think it’s about providing trust to developers. Let me explain.
+The walkthrough above is a simple use case of a coding task that one agent on a laptop can run, created for the purposes of showing how to use the CLI tool. Further from that, I think that the vision behind Docker Sandboxes is larger than just providing a component. I think it’s about providing an agent execution layer that developers can easily trust by design.
 
-**Local sandboxes are a developer tool.** Cloud sandboxes exist, but the primary job they solve is: an engineer’s machine, several repos they are working on, and multiple coding agents installing packages, downloading images and binaries, editing and running code. That is a laptop problem before it is a fleet-in-the-cloud problem.
+**Local sandboxes are a developer tool.** Cloud sandboxes exist as well, but the primary job docker sandboxes solve is: an engineer’s machine, several repos they are working on, multiple coding agents installing packages, editing code and executing commands.
 
-**I expect developers to run many agents locally.** It is getting hard to imagine day-to-day engineering without several agents implementing and executing code on the same machine. If those agents are going to run with real autonomy — fewer permission prompts, longer unattended stretches — then “trust the model” is not enough. You need isolation guarantees on the box where the work happens.
+**I expect developers to run even more agents in the future.** It is getting hard to imagine day-to-day engineering without several agents working on a developer's machine. That makes lightweight and isolated sandboxes for each even more attractive. 
 
-**That framing makes the microVM choice make sense.** If each agent sits in its own full traditional VM, a swarm on a laptop gets expensive fast. There is a real incentive to make each boundary as lightweight as you can while still getting a separate kernel. microVMs are that bet: VM-class isolation with less of the traditional VM tax. (I am not claiming a specific MB or cold-start number for `sbx` here — only the design pressure.)
+**the microVM choice makes sense.** If each agent sits in its own full traditional VM, a swarm on a laptop gets expensive fast. There is a real incentive to make each boundary as lightweight as you can while still getting a separate kernel. microVMs are that bet: VM-class isolation with less of the traditional VM overhead.
 
-**The private Docker Engine also makes a lot of sense when thinking about trusting containers.** With many agents on one machine, you cannot realistically audit that none of them reaches for the host Docker socket — accidentally or on purpose. Access to that socket is effectively control of the host’s containers and, in practice, a path to the host itself. Putting a separate Engine inside each microVM, with no path to the host socket, draws the boundary in the place that matters for agent work that needs Compose.
+**The private Docker Engine is a very reasonable design decision when thinking about trusting containers.** With many agents on one machine, you cannot realistically audit that none of them reaches for the host Docker socket — accidentally or on purpose. Access to that socket is effectively control of the host’s containers and, in practice, a path to the host itself. Putting a separate Engine inside each microVM, with no path to the host socket, draws the boundary in the place that matters for agent work that needs Compose.
 
 **Containers alone are the wrong default for this threat model.** If you could guarantee that agents never run hostile or confused code, a container might be enough sandbox for many workflows. That guarantee is not available. Agents execute untrusted dependencies, generated scripts, and tools you did not review line by line. Shared-kernel isolation is a weaker story for “I will let this run on my laptop while I look away.”
 
