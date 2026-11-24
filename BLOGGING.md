@@ -80,7 +80,7 @@ Everything above the marker is the river excerpt. The word count still covers th
 | `project` | At most **one** slug from `src/projects.config.ts` | Only when the post is about that repo. Omit it otherwise | Homepage “On” chips, stream footer, `/blog/project/<slug>` |
 | `tags` | Extra topics | Lowercase, hyphenated. Two or three. Do not repeat the project slug | Stream footer, `/blog/tag/<tag>` |
 
-Current project slugs: `hookedllm`, `grompt`, `noesis`, `codii`, `raglet`, `spek`, `tinysh`.
+Current project slugs: `hookedllm`, `grompt`, `noesis`, `codii`, `raglet`, `spek`, `tinysh`, `dbox`.
 
 Examples:
 

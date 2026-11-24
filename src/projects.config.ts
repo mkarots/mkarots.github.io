@@ -50,6 +50,13 @@ export const projects = [
 		url: 'https://github.com/mkarots/tinysh',
 		language: 'C',
 	},
+	{
+		slug: 'dbox',
+		name: 'dbox',
+		description: 'Docker Sandboxes (sbx) playground: intentionally broken notes API for local agent isolation practice.',
+		url: 'https://github.com/mkarots/dbox',
+		language: 'Python',
+	},
 ] as const;
 
 export type ProjectSlug = typeof projects[number]['slug'];
