@@ -199,7 +199,6 @@ Example from my run:
 
 The notes-API example is only important as a general coding task. A developer, runs multiple similar tasks daily, giving agents increasing autonomy over those tasks. 
 Its important that developers can run powerful and autonomous agents, while at the same time ensuring that those powerful agents can never execute commands that will compromise or corrupt the developer's machine.
-The best place to read about Docker Sandboxes and understand the design in more depth is [Docker Sandboxes vs containers](https://www.docker.com/products/docker-sandboxes/vs-containers/).
 
 Lastly, as an engineer, it's nice seeing Docker Inc. working on agentic primitives, given the company's contributions to open source software!
 
