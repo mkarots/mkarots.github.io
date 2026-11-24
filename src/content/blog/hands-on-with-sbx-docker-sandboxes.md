@@ -6,9 +6,11 @@ project: dbox
 tags: [docker, agents, sandboxes]
 ---
 
-This walkthrough uses [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) to run a coding agent inside a **local** sandbox. The workflow is roughly: (a) install the CLI, (b) define a sandbox and mount a project directory on it, (c) start the sandbox locally with a baked-in Claude agent, (d) use it for a coding task. The agent’s task is to fix a small broken FastAPI + Postgres app. You can find the code for it in the repo: [github.com/mkarots/dbox](https://github.com/mkarots/dbox).
+[Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) are primarily a **developer tool for your laptop**: an agent execution layer you can trust by design when coding agents install packages, edit files, and run Compose on a machine you care about. Cloud sandboxes exist too, but the job I care about here is local — several repos, multiple agents, one developer machine.
 
-`sbx` is primarily a **developer tool for your laptop** — a way to run coding agents on your development machine without them having access all over it. An agent that is only expected to work on a specific project/directory should not have access to all other project directories or folders within that machine. The conclusions at the end are where I argue why that design (microVM + private Docker Engine + network policy) fits how engineers are starting to work with agents.
+I expect that pattern to get denser, not rarer. If each agent sat in a full traditional VM, a swarm on a laptop gets expensive fast, so the microVM bet makes sense: a separate kernel with less traditional VM overhead. The private Docker Engine is the other half — you cannot realistically audit that none of those agents reaches for the host Docker socket, and that socket is effectively control of the host’s containers (and, in practice, a path to the host). A container alone is the wrong default for this threat model: agents run untrusted dependencies and generated scripts; shared-kernel isolation is a weaker story for “I’ll let this run while I look away.” Even aside from malice, separate kernels and Engines are good hygiene — cleanup with `sbx rm`, less collision with your real local Docker state, a clear place for network policy.
+
+Below is a thin walkthrough of that surface: install the CLI, define a sandbox and mount a project, start it with a baked-in Claude agent, and fix a small broken FastAPI + Postgres app. Repo: [github.com/mkarots/dbox](https://github.com/mkarots/dbox).
 
 <!--more-->
 
@@ -41,9 +43,11 @@ dbox/
     └── tests/
 ```
 
-`sbxenv.yaml` can declare lifecycle and secret commands that `sbx` runs on your **Mac**, as your user, after you approve a plan ([docs](https://docs.docker.com/ai/sandboxes/configuration/environment-files/)). `playground/` is mounted read-write into the VM, so the agent can change any file under it. If `sbxenv.yaml` lived inside `playground/`, the agent could edit those host-side commands (or the workspace and port mappings) on disk before the next `sbx env run`. Keep the env file under `sbx/`, outside the mount: the agent can patch the notes API; it cannot rewrite the file that tells `sbx` what to execute on the host.
+`sbxenv.yaml` can declare lifecycle and secret commands that `sbx` runs on your **Mac**, as your user, after you approve a plan ([docs](https://docs.docker.com/ai/sandboxes/configuration/environment-files/)). `playground/` is mounted read-write into the VM, so the agent can change any file under it.
 
-The mounted workspace is a notes API: FastAPI talking to Postgres, two Compose services (`api` and `postgres`). A user can create a note, fetch it by id, and hit `/health`.
+> **Note:** If `sbxenv.yaml` lived inside `playground/`, the agent could edit those host-side commands (or the workspace and port mappings) on disk before the next `sbx env run`. Keep the env file under `sbx/`, outside the mount: the agent can patch the notes API; it cannot rewrite the file that tells `sbx` what to execute on the host.
+
+The mounted project is a simple note-keeping API: FastAPI talking to Postgres, two Compose services (`api` and `postgres`). A user can create a note, fetch it by id, and hit `/health`.
 
 The stack is **intentionally broken** in a few places. Inside `sbx`, an agent should fix it with small patches, then prove:
 
@@ -191,32 +195,23 @@ Example from my run:
 
 (Ids may differ depending on how many notes you created.)
 
-## Conclusions
+## Closing
 
-The walkthrough above is a simple use case of a coding task that one agent on a laptop can run, created for the purposes of showing how to use the CLI tool. Further from that, I think that the vision behind Docker Sandboxes is larger than just providing a component. I think it’s about providing an agent execution layer that developers can easily trust by design.
+The notes-API example is only important as a general coding task. A developer, runs multiple similar tasks daily, giving agents increasing autonomy over those tasks. 
+Its important that developers can run powerful and autonomous agents, while at the same time ensuring that those powerful agents can never execute commands that will compromise or corrupt the developer's machine.
+The best place to read about Docker Sandboxes and understand the design in more depth is [Docker Sandboxes vs containers](https://www.docker.com/products/docker-sandboxes/vs-containers/).
 
-**Local sandboxes are a developer tool.** Cloud sandboxes exist as well, but the primary job docker sandboxes solve is: an engineer’s machine, several repos they are working on, multiple coding agents installing packages, editing code and executing commands.
-
-**I expect developers to run even more agents in the future.** It is getting hard to imagine day-to-day engineering without several agents working on a developer's machine. That makes lightweight and isolated sandboxes for each even more attractive. 
-
-**the microVM choice makes sense.** If each agent sits in its own full traditional VM, a swarm on a laptop gets expensive fast. There is a real incentive to make each boundary as lightweight as you can while still getting a separate kernel. microVMs are that bet: VM-class isolation with less of the traditional VM overhead.
-
-**The private Docker Engine is a very reasonable design decision when thinking about trusting containers.** With many agents on one machine, you cannot realistically audit that none of them reaches for the host Docker socket — accidentally or on purpose. Access to that socket is effectively control of the host’s containers and, in practice, a path to the host itself. Putting a separate Engine inside each microVM, with no path to the host socket, draws the boundary in the place that matters for agent work that needs Compose.
-
-**Containers alone are the wrong default for this threat model.** If you could guarantee that agents never run hostile or confused code, a container might be enough sandbox for many workflows. That guarantee is not available. Agents execute untrusted dependencies, generated scripts, and tools you did not review line by line. Shared-kernel isolation is a weaker story for “I will let this run on my laptop while I look away.”
-
-**Even aside from malice, the engineering case is still good.** Separate kernels and separate Engines give you cleanup (`sbx rm` drops the VM’s packages and images), less collision with your real local Docker state, and a clearer place to attach network policy. Isolation is useful as a best practice.
-
-Apart from the engineering perspective, it’s also nice as a developer to see Docker working on agentic primitives as well, given the company’s history on developer tools!
+Lastly, as an engineer, it's nice seeing Docker Inc. working on agentic primitives, given the company's contributions to open source software!
 
 If you made it all the way here, feel free to send me a message on [michaelk (@cepstrum9) on X](https://x.com/cepstrum9) with your thoughts or feedback!
 
 ## References
 
-1. [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/)
-2. [Get started](https://docs.docker.com/ai/sandboxes/get-started/)
-3. [Environment files](https://docs.docker.com/ai/sandboxes/configuration/environment-files/)
-4. [Isolation](https://docs.docker.com/ai/sandboxes/security/isolation)
-5. [Shell (agent-less sandbox)](https://docs.docker.com/ai/sandboxes/agents/shell/)
-6. [Build an agent workload (kits)](https://docs.docker.com/ai/sandboxes/customize/author/build-an-agent/)
-7. [mkarots/dbox](https://github.com/mkarots/dbox)
+1. [Docker Sandboxes vs containers](https://www.docker.com/products/docker-sandboxes/vs-containers/)
+2. [Docker Sandboxes docs](https://docs.docker.com/ai/sandboxes/)
+3. [Get started](https://docs.docker.com/ai/sandboxes/get-started/)
+4. [Environment files](https://docs.docker.com/ai/sandboxes/configuration/environment-files/)
+5. [Isolation](https://docs.docker.com/ai/sandboxes/security/isolation)
+6. [Shell (agent-less sandbox)](https://docs.docker.com/ai/sandboxes/agents/shell/)
+7. [Build an agent workload (kits)](https://docs.docker.com/ai/sandboxes/customize/author/build-an-agent/)
+8. [mkarots/dbox](https://github.com/mkarots/dbox)
